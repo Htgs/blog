@@ -1,0 +1,57 @@
+<%- include('header') -%>
+	<div class="container">
+		<div class="row">
+			<form class="col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3">
+				<div class="form-group required">
+					<label for="username">用户名</label>
+					<input type="text" id="username" class="form-control" placeholder="请输入名称" aria-describedby="help-username">
+					<span id="help-username" class="help-block"></span>
+				</div>
+				<div class="form-group required">
+					<label for="password">密码</label>
+					<input type="password" class="form-control" id="password" placeholder="请输入密码" aria-describedby="help-password">
+					<span id="help-password" class="help-block"></span>
+				</div>
+				<div class="form-group required">
+					<label for="repassword">确认密码</label>
+					<input type="password" class="form-control" id="repassword" placeholder="再次输入密码" aria-describedby="help-repassword">
+					<span id="help-repassword" class="help-block"></span>
+				</div>
+				<button type="button" class="btn btn-primary" id="register">注册</button>
+			</form>
+		</div>
+	</div>
+	<script>
+		$('.required').find('input')
+		.on('focus', function(){
+			$(this).parent().removeClass('has-error has-success')
+			.find('#help-' + field).text('')
+		})
+		.on('blur', function(){
+			let $parent = $(this).parent()
+			let val = $(this).val()
+			let field = $(this).attr('id')
+			let label = $(this).parent().find('label').text()
+			if ($.trim(val) == '') {
+				$parent.addClass('has-error')
+				.find('#help-' + field).text(label + '不能为空')
+			}
+			else if (val.length > 20) {
+				$parent.addClass('has-error')
+				.find('#help-' + field).text(label + '长度不能超过20')
+			}
+			else if (field == 'repassword') {
+				let pre_val = $('#password')
+				if (pre_val !== val) {
+					$parent.addClass('has-error')
+				}
+			}
+			else {
+				$parent.addClass('has-success')
+			}
+		})
+		$('#register').on('click', function(){
+
+		})
+	</script>
+<%- include('footer') -%>

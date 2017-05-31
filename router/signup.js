@@ -7,21 +7,15 @@ const router = express.Router()
 const UserModel = require('../models/user.js')
 const checkNotLogin = require('../middlewares/check.js').checkNotLogin
 
-// router.get('/:name', function(req, res) {
-// 	res.render('users', {
-// 		name: req.params.name,
-// 		port: 2222
-// 	})
-// })
 
 // 请求注册页
-router.get('/signup', checkNotLogin, (req, res, next) => {
-	// res.send(req.flash())
-	res.render('signup')
+router.get('/', checkNotLogin, (req, res, next) => {
+    // res.send(req.flash())
+    res.render('signup')
 })
 
 // 提交注册信息
-router.put('/signup', checkNotLogin, (req, res, next) => {
+router.put('/', checkNotLogin, (req, res, next) => {
     // res.send(req.flash())
     let username = req.fields.username
     let password = req.fields.password
@@ -51,36 +45,15 @@ router.put('/signup', checkNotLogin, (req, res, next) => {
             delete user.password
             req.session.user = user
             req.flash('success', '注册成功')
-            res.send(1)
             // res.redirect('/article')
         })
         .catch(function (e) {
             if (e.message.match('E11000 duplicate key')) {
                 req.flash('error', '用户名已被占用')
-                return res.send(0)
                 // return res.redirect('/user/signup')
             }
             next(e)
         })
-})
-
-// 请求登录页
-router.get('/signin', checkNotLogin, (req, res, next) => {
-	// res.send()
-	res.render('signin')
-})
-
-// 提交登录信息
-router.post('/signin', checkNotLogin, (req, res, next) => {
-	// res.send(req.flash())
-    console.dir(req)
-    console.dir(res)
-
-})
-
-// 登出
-router.get('/signout', checkNotLogin, (req, res, next) => {
-	res.send(req.flash())
 })
 
 module.exports = router

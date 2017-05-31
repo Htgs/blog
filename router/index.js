@@ -10,6 +10,7 @@ module.exports = (app) => {
 		res.redirect('/user/signin')
 	})
 	app.use('/user', require('./user'))
+	app.use('/signup', require('./signup'))
 	app.use('/article', require('./article'))
 
 	app.use((req, res) => {

@@ -5,7 +5,8 @@ const checkLogin = require('../middlewares/check.js').checkLogin
 
 // 请求文章页
 router.get('/', checkLogin, (req, res, next) => {
-	res.send(req.flash())
+	// res.send(req.flash())
+    res.render('home')  
 })
 
 // 提交请求发表文章

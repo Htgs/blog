@@ -11,7 +11,7 @@ const app = express()
 app.set('views', path.join(__dirname, 'views'))
 app.set('view engine', 'ejs')
 
-app.use('/public', express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public')))
 
 app.use(session({
 	name: config.session.key,// 设置 cookie 中保存 session id 的字段名称
@@ -49,6 +49,13 @@ app.use(function (req, res, next) {
 
 router(app)
 
+app.use(function (err, req, res, next) {
+	res.render('error', {
+		error: err
+	})
+})
+
 app.listen(config.port, () => {
+	console.log(__dirname)
 	console.log(`${pkg.name} listening on port ${config.port}`)
 })

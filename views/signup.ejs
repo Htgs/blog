@@ -1,23 +1,23 @@
 <%- include('header') -%>
 	<div class="container">
 		<div class="row">
-			<form class="col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3" name="register">
+			<form class="col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-3" name="register" method="post">
 				<div class="form-group required">
 					<label for="username">用户名</label>
-					<input type="text" id="username" class="form-control" placeholder="请输入名称" aria-describedby="help-username">
+					<input type="text" id="username" name="username" class="form-control" placeholder="请输入名称" aria-describedby="help-username">
 					<span id="help-username" class="help-block"></span>
 				</div>
 				<div class="form-group required">
 					<label for="password">密码</label>
-					<input type="password" class="form-control" id="password" placeholder="请输入密码" aria-describedby="help-password">
+					<input type="password" class="form-control" id="password" name="password" placeholder="请输入密码" aria-describedby="help-password">
 					<span id="help-password" class="help-block"></span>
 				</div>
 				<div class="form-group required">
 					<label for="repassword">确认密码</label>
-					<input type="password" class="form-control" id="repassword" placeholder="再次输入密码" aria-describedby="help-repassword">
+					<input type="password" class="form-control" id="repassword" name="repassword" placeholder="再次输入密码" aria-describedby="help-repassword">
 					<span id="help-repassword" class="help-block"></span>
 				</div>
-				<input type="button" class="btn btn-primary" id="register" value="注册">
+				<input type="submit" class="btn btn-primary" id="register" value="注册">
 			</form>
 		</div>
 	</div>
@@ -50,19 +50,19 @@
 		// 		$parent.addClass('has-success')
 		// 	}
 		// })
-		$('#register').on('click', function(){
-			let form = document.forms['register']
-			$.ajax({
-				type: 'put',
-				url: '/signup',
-				data: $(form).serialize(),
-				success: function (data) {
-					console.log(data)
-				},
-				error: function (err) {
-					console.log(err)
-				}
-			})
-		})
+		// $('#register').on('click', function(){
+		// 	let form = document.forms['register']
+		// 	$.ajax({
+		// 		type: 'put',
+		// 		url: '/signup',
+		// 		data: $(form).serialize(),
+		// 		success: function (data) {
+		// 			console.log(data)
+		// 		},
+		// 		error: function (err) {
+		// 			console.log(err)
+		// 		}
+		// 	})
+		// })
 	</script>
 <%- include('footer') -%>

@@ -21,13 +21,14 @@ router.get('/signup', checkNotLogin, (req, res, next) => {
 })
 
 // 提交注册信息
-router.put('/signup', checkNotLogin, (req, res, next) => {
+// 设置在这里会无法post到 /user/signup
+router.post('/signup', checkNotLogin, (req, res, next) => {
     // res.send(req.flash())
     let username = req.fields.username
     let password = req.fields.password
     let repassword = req.fields.repassword
     try {
-        if (!(name.length >= 1 && name.length <= 10)) {
+        if (!(username.length >= 1 && username.length <= 10)) {
             throw new Error('名字请限制在 1-10 个字符');
         }
         if (password.length < 6) {

@@ -1,0 +1,33 @@
+<%- include('header') -%>
+	<div class="container">
+		<div class="row">
+			<div class="page-header">
+				<h1><%= article.title %></h1>
+			</div>
+			<h5 class="pull-left"><%= article.author.name %><small class="ml-10"><%= article.created_at %></small></h5>
+			<% if (article.author._id == user._id) { %>
+			<div class="pull-right">
+				<a class="btn btn-primary" href="/article/<%= article._id %>/edit" role="button">编辑</a>
+				<a class="btn btn-danger" href="/article/<%= article._id %>/delete" role="button">删除</a>
+			</div>
+			<% } %>
+		</div>
+		<div class="row">
+			<h3></h3>
+			<pre><%- article.content %></pre>
+			<small>浏览次数：<%= article.pv %></small>
+		</div>
+		<div class="row">
+			<form class="col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1" method="post" name="comment" action="./<%= article._id %>/comment">
+				<div class="form-group required">
+					<textarea class="form-control" name="content" placeholder="请输入评论" aria-describedby="help-content" style="resize:none" rows="5"></textarea>
+					<span id="help-content" class="help-block"></span>
+				</div>
+				<input type="submit" class="btn btn-primary" value="发表">
+			</form>
+			<% comments.forEach(function (comment){ %>
+				<%- include('comment') -%>
+			<% }) %>
+		</div>
+	</div>
+<%- include('footer') -%>

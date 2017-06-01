@@ -10,18 +10,16 @@ const checkNotLogin = require('../middlewares/check.js').checkNotLogin
 
 // 请求注册页
 router.get('/', checkNotLogin, (req, res, next) => {
-    // res.send(req.flash())
     res.render('signup')
 })
 
 // 提交注册信息
-router.put('/', checkNotLogin, (req, res, next) => {
-    // res.send(req.flash())
+router.post('/', checkNotLogin, (req, res, next) => {
     let username = req.fields.username
     let password = req.fields.password
     let repassword = req.fields.repassword
     try {
-        if (!(name.length >= 1 && name.length <= 10)) {
+        if (!(username.length >= 1 && username.length <= 10)) {
             throw new Error('名字请限制在 1-10 个字符');
         }
         if (password.length < 6) {
@@ -45,12 +43,12 @@ router.put('/', checkNotLogin, (req, res, next) => {
             delete user.password
             req.session.user = user
             req.flash('success', '注册成功')
-            // res.redirect('/article')
+            res.redirect('/article')
         })
         .catch(function (e) {
             if (e.message.match('E11000 duplicate key')) {
                 req.flash('error', '用户名已被占用')
-                // return res.redirect('/user/signup')
+                return res.redirect('/signup')
             }
             next(e)
         })

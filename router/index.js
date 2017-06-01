@@ -7,10 +7,12 @@ module.exports = (app) => {
 		// 	if (err) throw err
 		// 	res.send(data)
 		// })
-		res.redirect('/user/signin')
+		res.redirect('/article')
 	})
-	app.use('/user', require('./user'))
+	// app.use('/user', require('./user'))
 	app.use('/signup', require('./signup'))
+	app.use('/signin', require('./signin'))
+	app.use('/signout', require('./signout'))
 	app.use('/article', require('./article'))
 
 	app.use((req, res) => {

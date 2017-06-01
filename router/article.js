@@ -78,20 +78,25 @@ router.get('/:articleId', (req, res, next) => {
 	let articleId = req.params.articleId
 	Promise.all([
 		Article.getArticleById(articleId),
+		Comment.getCommentsByArticleId(articleId),
 		Article.incPv(articleId),
 	])
 	.then(function (result) {
 		// res.send(result)
 		// [
-		// 	{
-		// 		"_id":"592fb67cd168b90ad441a498",
-		// 		"author":{"_id":"592f6a7883e98c1508ac8a82","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},
-		// 		"title":"测试",
-		// 		"content":"<p>8888</p>\n",
-		// 		"pv":7,
-		// 		"created_at":"2017-06-01 14:38"
-		// 	},
-		// 	{"n":1,"nModified":1,"ok":1}
+		// 	{"_id":"59302abe3bc9dc045051fb85","author":{"_id":"5930293e5993c71590500065","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},"title":"gsagsadsfdsa","content":"<p>fewfas</p>\n","pv":4,"created_at":"2017-06-01 22:54","commentsCount":3},
+		// 	[
+		// 		{
+		// 			"_id":"59302ac73bc9dc045051fb86",
+		// 			"author":{"_id":"5930293e5993c71590500065","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},
+		// 			"articleId":"59302abe3bc9dc045051fb85",
+		// 			"content":"<p>test 1</p>\n",
+		// 			"created_at":"2017-06-01 22:55"
+		// 		},
+		// 		{"_id":"59302ad33bc9dc045051fb87","author":{"_id":"5930293e5993c71590500065","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},"articleId":"59302abe3bc9dc045051fb85","content":"<p>fdsa</p>\n","created_at":"2017-06-01 22:55"},
+		// 		{"_id":"59302adc3bc9dc045051fb88","author":{"_id":"5930293e5993c71590500065","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},"articleId":"59302abe3bc9dc045051fb85","content":"<p>asad</p>\n","created_at":"2017-06-01 22:55"}
+		// 	]
+		// 	,{"n":1,"nModified":1,"ok":1}
 		// ]
 		let article = result[0]
 		let comments = result[1]
@@ -181,7 +186,7 @@ router.post('/:articleId/comment', checkLogin, (req, res, next) => {
 	}
 	Comment.create(comment)
 		.then(function (result) {
-			res.send(result)
+			// res.send(result)
 			// {"result":{"ok":1,"n":1},"ops":[{"author":"592f6a7883e98c1508ac8a82","articleId":"592fbcafad403b0e08d68267","content":"但是","_id":"592fe4bed1eeb61088d6d1f0"}],"insertedCount":1,"insertedIds":[null,"592fe4bed1eeb61088d6d1f0"]}
 			comment = result.ops[0]
 			req.flash('success', '评论成功')
@@ -191,7 +196,14 @@ router.post('/:articleId/comment', checkLogin, (req, res, next) => {
 })
 
 router.get('/:articleId/comment/:commentId/delete', checkLogin, (req, res, next) => {
-	res.send(req.flash())
+	let commentId = req.params.commentId
+	let author = req.session.user._id
+	Comment.deleteCommentsById(commentId, author)
+		.then(function (result){
+			req.flash('success', '删除留言成功')
+			res.redirect('back')
+		})
+		.catch(next)
 })
 
 module.exports = router

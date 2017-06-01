@@ -87,7 +87,7 @@ module.exports = {
 			.remove({ author: author, _id: articleId })
 			.exec()
 			.then(function (result) {
-				if (res.result.ok && res.result.n > 0) {
+				if (result.result.ok && result.result.n > 0) {
 					return Comment.deleteCommentsById(articleId)
 				}
 			})

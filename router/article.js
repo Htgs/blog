@@ -1,3 +1,5 @@
+const moment = require('moment')
+
 const express = require('express')
 const router = express.Router()
 
@@ -19,6 +21,9 @@ router.get('/', checkLogin, (req, res, next) => {
 			// 	{"_id":"592f90ba623f861b88e5c381","author":{"_id":"592f6a7883e98c1508ac8a82","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},"title":"sa","content":"<p>fe</p>\n","created_at":"2017-06-01 11:57"},
 			// 	{"_id":"592f8b9aa0fcaa1848b3212b","author":{"_id":"592f6a7883e98c1508ac8a82","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},"title":"sa","content":"<p>fe</p>\n","created_at":"2017-06-01 11:35"}
 			// ]
+			result.forEach(function (item) {
+				item.created_at = moment(item.created_at).format('YYYY-MM-DD HH:mm')
+			})
     		res.render('articles', {
     			articles: result
     		})
@@ -61,7 +66,6 @@ router.post('/', checkLogin, (req, res, next) => {
 		author: author,
 		title: title,
 		content: content,
-		pv: 0
 	}
 
 	Article.create(article)
@@ -189,7 +193,7 @@ router.post('/:articleId/comment', checkLogin, (req, res, next) => {
 		.then(function (result) {
 			// res.send(result)
 			// {"result":{"ok":1,"n":1},"ops":[{"author":"592f6a7883e98c1508ac8a82","articleId":"592fbcafad403b0e08d68267","content":"但是","_id":"592fe4bed1eeb61088d6d1f0"}],"insertedCount":1,"insertedIds":[null,"592fe4bed1eeb61088d6d1f0"]}
-			comment = result.ops[0]
+			comment = result
 			req.flash('success', '评论成功')
 			res.redirect('back')
 		})

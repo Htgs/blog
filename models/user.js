@@ -1,14 +1,13 @@
-const User = require('../lib/mongo').User
+const User = require('../lib/mongoose').User
 
 module.exports = {
     create: function (user) {
-        return User.create(user).exec()
+        return User.create(user)
     },
     getUserByName: function (name) {
-    	// return User.findOne({ name: name }).exec()
-    	return User.findOne({ name: name }).addCreatedAt().exec()
+    	return User.findOneAndUpdate({ name: name }, { $set: { changed_at: Date.now() } })
     },
     passwordById: function (userId, password) {
-    	return User.update({ _id: userId }, { password: password }).exec()
+    	return User.findOneAndUpdate({ _id: userId }, { password: password })
     }
 }

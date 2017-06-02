@@ -3,7 +3,7 @@
 		<% articles.forEach(function(article){ %>
 			<div class="jumbotron">
 				<h1><%= article.title %></h1>
-				<h6><%= article.author.name %></h6>
+				<h6><%= article.author.name %><small class="ml-10"><%= article.created_at %></small>%></h6>
 				<pre><%- article.content %></pre>
 				<p><a class="btn btn-primary" href="/article/<%= article._id %>" role="button">查看</a></p>
 			</div>

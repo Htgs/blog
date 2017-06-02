@@ -1,5 +1,5 @@
 const marked = require('marked')
-const Comment = require('../lib/mongo').Comment
+const Comment = require('../lib/mongoose').Comment
 
 Comment.plugin('contentToHtml', {
 	afterFind: function (comment) {
@@ -12,24 +12,22 @@ Comment.plugin('contentToHtml', {
 
 module.exports = {
 	create: function (comment) {
-		return Comment.create(comment).exec()
+		return Comment.create(comment)
 	},
 	getCommentsByArticleId: function (articleId) {
 		return Comment
 			.find({ articleId: articleId })
 			.populate({ path: 'author', model: 'User' })
 			.sort({ _id: 1 })
-			.addCreatedAt()
 			.contentToHtml()
-			.exec()
 	},
 	getCommentsCountByArticleId: function (articleId) {
-		return Comment.count({ articleId: articleId }).exec()
+		return Comment.count({ articleId: articleId })
 	},
 	deleteCommentsByArticleId: function (articleId) {
-		return Comment.remove({ articleId: articleId }).exec()
+		return Comment.remove({ articleId: articleId })
 	},
 	deleteCommentsById: function (commentId, author) {
-		return Comment.remove({ _id: commentId, author: author }).exec()
+		return Comment.remove({ _id: commentId, author: author })
 	},
 }

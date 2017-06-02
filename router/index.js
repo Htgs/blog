@@ -12,7 +12,7 @@ module.exports = (app) => {
 	app.use('/signup', require('./signup'))
 	app.use('/signin', require('./signin'))
 	app.use('/signout', require('./signout'))
-	// app.use('/user', require('./user'))
+	app.use('/user', require('./user'))
 	app.use('/article', require('./article'))
 
 	app.use((req, res) => {

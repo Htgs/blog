@@ -1,5 +1,3 @@
-const fs = require('fs')
-const path = require('path')
 const sha1 = require('sha1')
 const express = require('express')
 const router = express.Router()

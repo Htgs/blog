@@ -9,15 +9,15 @@ module.exports = (app) => {
 		// })
 		res.redirect('/article')
 	})
-	// app.use('/user', require('./user'))
 	app.use('/signup', require('./signup'))
 	app.use('/signin', require('./signin'))
 	app.use('/signout', require('./signout'))
+	// app.use('/user', require('./user'))
 	app.use('/article', require('./article'))
 
 	app.use((req, res) => {
 		if (!res.headersSent) {
-			res.status(404).send('404')
+			res.status(404).render('404')
 		}
 	})
 }

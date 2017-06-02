@@ -88,7 +88,8 @@ module.exports = {
 			.exec()
 			.then(function (result) {
 				if (result.result.ok && result.result.n > 0) {
-					return Comment.deleteCommentsById(articleId)
+					// console.log(result)
+					return Comment.deleteCommentsByArticleId(articleId)
 				}
 			})
 	}

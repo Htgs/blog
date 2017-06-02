@@ -7,5 +7,8 @@ module.exports = {
     getUserByName: function (name) {
     	// return User.findOne({ name: name }).exec()
     	return User.findOne({ name: name }).addCreatedAt().exec()
+    },
+    passwordById: function (userId, password) {
+    	return User.update({ _id: userId }, { password: password }).exec()
     }
 }

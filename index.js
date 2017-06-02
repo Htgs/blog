@@ -6,6 +6,10 @@ const flash = require('connect-flash')
 const config = require('config-lite')(__dirname)
 const router = require('./router')
 const pkg = require('./package')
+const winston = require('winston')
+const expressWinston = require('express-winston')
+
+
 const app = express()
 
 app.set('views', path.join(__dirname, 'views'))
@@ -47,7 +51,31 @@ app.use(function (req, res, next) {
 	next()
 })
 
+app.use(expressWinston.logger({
+	transports: [
+		new (winston.transports.Console)({
+			json: true,
+			colorize: true
+		}),
+		new winston.transports.File({
+			filename: 'logs/success.log'
+		})
+	]
+}))
+
 router(app)
+
+app.use(expressWinston.errorLogger({
+	transports: [
+		new (winston.transports.Console)({
+			json: true,
+			colorize: true
+		}),
+		new winston.transports.File({
+			filename: 'logs/error.log'
+		})
+	]
+}))
 
 app.use(function (err, req, res, next) {
 	res.render('error', {
@@ -55,7 +83,10 @@ app.use(function (err, req, res, next) {
 	})
 })
 
-app.listen(config.port, () => {
-	console.log(__dirname)
-	console.log(`${pkg.name} listening on port ${config.port}`)
-})
+if (module.parent) {
+	module.exports = app
+} else {
+	app.listen(config.port, () => {
+		console.log(`${pkg.name} listening on port ${config.port}`)
+	})
+}

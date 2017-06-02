@@ -60,7 +60,8 @@ router.post('/', checkLogin, (req, res, next) => {
 	let article = {
 		author: author,
 		title: title,
-		content: content
+		content: content,
+		pv: 0
 	}
 
 	Article.create(article)

@@ -36,7 +36,11 @@
 							</a>
 						</div>
 						<div class="media-body clearfix">
-							<h4 class="media-heading"><%= comment.author.name %><small class="ml-10"><%= comment.created_at%></small><a href="./<%= article._id %>/comment/<%= comment._id%>/delete" class="btn btn-default ml-10" role="button">删除</a></h4>
+							<h4 class="media-heading"><%= comment.author.name %><small class="ml-10"><%= comment.created_at%></small>
+								<% if (comment.author._id == user._id) { %>
+									<a href="./<%= article._id %>/comment/<%= comment._id%>/delete" class="btn btn-default ml-10" role="button">删除</a>
+								<% } %>
+							</h4>
 							<pre><%- comment.content %></pre>
 						</div>
 					</div>

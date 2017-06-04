@@ -1,14 +1,14 @@
 const marked = require('marked')
 const Comment = require('../lib/mongoose').Comment
 
-Comment.plugin('contentToHtml', {
-	afterFind: function (comment) {
-		return comment.map(function (comment) {
-			comment.content = marked(comment.content)
-			return comment
-		})
-	},
-})
+// Comment.plugin('contentToHtml', {
+// 	afterFind: function (comment) {
+// 		return comment.map(function (comment) {
+// 			comment.content = marked(comment.content)
+// 			return comment
+// 		})
+// 	},
+// })
 
 module.exports = {
 	create: function (comment) {
@@ -17,9 +17,9 @@ module.exports = {
 	getCommentsByArticleId: function (articleId) {
 		return Comment
 			.find({ articleId: articleId })
-			.populate({ path: 'author', model: 'User' })
+			.populate({ path: 'author', model: 'User', select: ['name', 'avater'] })
 			.sort({ _id: 1 })
-			.contentToHtml()
+			// .contentToHtml()
 	},
 	getCommentsCountByArticleId: function (articleId) {
 		return Comment.count({ articleId: articleId })

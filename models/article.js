@@ -3,42 +3,44 @@ const marked = require('marked')
 const Article = require('../lib/mongoose').Article
 const Comment = require('./comment')
 
-Article.plugin('addCommentsCount', {
-	afterFind: function (articles) {
-		return Promise.all(articles.map(function (article) {
-			return Comment.getCommentsCountByArticleId(article._id)
-				.then(function (commentsCount) {
-					article.commentsCount = commentsCount
-					return article
-				})
-		}))
-	},
-	afterFindOne: function (article) {
-		if (article) {
-			return Comment.getCommentsCountByArticleId(article._id)
-				.then(function (commentsCount) {
-					article.commentsCount = commentsCount
-					return article
-				})
-		}
-		return article
-	}
-})
+console.log(Article)
 
-Article.plugin('contentToHtml', {
-	afterFind: function (articles) {
-		return articles.map(function (article) {
-			article.content = marked(article.content)
-			return article
-		})
-	},
-	afterFindOne: function (article) {
-		if (article) {
-			article.content = marked(article.content)
-		}
-		return article
-	}
-})
+// Article.plugin('addCommentsCount', {
+// 	afterFind: function (articles) {
+// 		return Promise.all(articles.map(function (article) {
+// 			return Comment.getCommentsCountByArticleId(article._id)
+// 				.then(function (commentsCount) {
+// 					article.commentsCount = commentsCount
+// 					return article
+// 				})
+// 		}))
+// 	},
+// 	afterFindOne: function (article) {
+// 		if (article) {
+// 			return Comment.getCommentsCountByArticleId(article._id)
+// 				.then(function (commentsCount) {
+// 					article.commentsCount = commentsCount
+// 					return article
+// 				})
+// 		}
+// 		return article
+// 	}
+// })
+
+// Article.plugin('contentToHtml', {
+// 	afterFind: function (articles) {
+// 		return articles.map(function (article) {
+// 			article.content = marked(article.content)
+// 			return article
+// 		})
+// 	},
+// 	afterFindOne: function (article) {
+// 		if (article) {
+// 			article.content = marked(article.content)
+// 		}
+// 		return article
+// 	}
+// })
 
 module.exports = {
 	create: function (article) {
@@ -46,10 +48,10 @@ module.exports = {
 	},
 	getArticleById: function (articleId) {
 		return Article
-			.findOne({ _id: articleId })
-			.populate({ path: 'author', model: 'User'})
-			.addCommentsCount()
-			.contentToHtml()
+			.findOneAndUpdate({ _id: articleId }, { $inc: { pv: 1 } })
+			.populate({ path: 'author', model: 'User', select: ['name', 'avater'] })
+			// .addCommentsCount()
+			// .contentToHtml()
 	},
 	getArticles: function (author) {
 		let query = {}
@@ -58,19 +60,19 @@ module.exports = {
 		}
 		return Article
 			.find(query)
-			.populate({ path: 'author', model: 'User' })
+			.populate({ path: 'author', model: 'User', select: ['name', 'avater'] })
 			.sort({ _id: -1 })
-			.addCommentsCount()
-			.contentToHtml()
+			// .addCommentsCount()
+			// .contentToHtml()
 	},
-	incPv: function (articleId) {
-		return Article.findOneAndUpdate({ _id: articleId }, { $inc: { pv: 1 } })
-	},
+	// incPv: function (articleId) {
+	// 	return Article.findOneAndUpdate({ _id: articleId }, { $inc: { pv: 1 } })
+	// },
 	// 获取编辑数据
 	getRawArticleById: function (articleId) {
 		return Article
 			.findOne({ _id: articleId })
-			.populate({ path: 'author', model: 'User' })
+			.populate({ path: 'author', model: 'User', select: 'name' })
 	},
 	// 保存编辑数据
 	updateArticleById: function (articleId, author, data) {
@@ -80,9 +82,7 @@ module.exports = {
 		return Article
 			.remove({ author: author, _id: articleId })
 			.then(function (result) {
-				console.log(result)
 				if (result.result.ok && result.result.n > 0) {
-					// console.log(result)
 					return Comment.deleteCommentsByArticleId(articleId)
 				}
 			})

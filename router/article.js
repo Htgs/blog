@@ -9,24 +9,17 @@ const checkLogin = require('../middlewares/check.js').checkLogin
 
 // 请求文章页
 router.get('/', checkLogin, (req, res, next) => {
-	// res.send(req.flash())
 	let query = req.query.author
 	Article.getArticles(query)
 		.then(function (result) {
-			// res.send(result)
-			// [
-			// 	{"_id":"592fbcafad403b0e08d68267","author":{"_id":"592f6a7883e98c1508ac8a82","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},"title":"888","content":"<p>433</p>\n","pv":2,"created_at":"2017-06-01 15:05"},
-			// 	{"_id":"592fb67cd168b90ad441a498","author":{"_id":"592f6a7883e98c1508ac8a82","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},"title":"测试","content":"<p>8888</p>\n","pv":33,"created_at":"2017-06-01 14:38"},
-			// 	{"_id":"592faa58a872bd15dce8f051","author":{"_id":"592f6a7883e98c1508ac8a82","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},"title":"555","content":"<p>334</p>\n","pv":4,"created_at":"2017-06-01 13:47"},
-			// 	{"_id":"592f90ba623f861b88e5c381","author":{"_id":"592f6a7883e98c1508ac8a82","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},"title":"sa","content":"<p>fe</p>\n","created_at":"2017-06-01 11:57"},
-			// 	{"_id":"592f8b9aa0fcaa1848b3212b","author":{"_id":"592f6a7883e98c1508ac8a82","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},"title":"sa","content":"<p>fe</p>\n","created_at":"2017-06-01 11:35"}
-			// ]
-			result.forEach(function (item) {
-				item.created_at = moment(item.created_at).format('YYYY-MM-DD HH:mm')
+			// console.log(result)
+			let articles = result
+			articles.forEach(function (item) {
+				item.created_time = moment(item.created_at).format('YYYY-MM-DD HH:mm')
 			})
-    		res.render('articles', {
-    			articles: result
-    		})
+			res.render('articles', {
+				articles: result
+			})
 		})
 		.catch(next)
 })
@@ -44,7 +37,6 @@ router.get('/create', checkLogin, (req, res, next) => {
 
 // 提交请求发表文章
 router.post('/', checkLogin, (req, res, next) => {
-	// res.send(req.fields)
 	let author = req.session.user._id
 	let title = req.fields.title
 	let content = req.fields.content
@@ -71,7 +63,7 @@ router.post('/', checkLogin, (req, res, next) => {
 	Article.create(article)
 		.then(function (result) {
 			// res.send(result)
-			article = result.ops[0]
+			article = result
 			req.flash('success', '发表成功')
 			res.redirect(`/article/${article._id}`)
 		})
@@ -84,30 +76,18 @@ router.get('/:articleId', (req, res, next) => {
 	Promise.all([
 		Article.getArticleById(articleId),
 		Comment.getCommentsByArticleId(articleId),
-		Article.incPv(articleId),
+		// Article.incPv(articleId),
 	])
 	.then(function (result) {
 		// res.send(result)
-		// [
-		// 	{"_id":"59302abe3bc9dc045051fb85","author":{"_id":"5930293e5993c71590500065","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},"title":"gsagsadsfdsa","content":"<p>fewfas</p>\n","pv":4,"created_at":"2017-06-01 22:54","commentsCount":3},
-		// 	[
-		// 		{
-		// 			"_id":"59302ac73bc9dc045051fb86",
-		// 			"author":{"_id":"5930293e5993c71590500065","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},
-		// 			"articleId":"59302abe3bc9dc045051fb85",
-		// 			"content":"<p>test 1</p>\n",
-		// 			"created_at":"2017-06-01 22:55"
-		// 		},
-		// 		{"_id":"59302ad33bc9dc045051fb87","author":{"_id":"5930293e5993c71590500065","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},"articleId":"59302abe3bc9dc045051fb85","content":"<p>fdsa</p>\n","created_at":"2017-06-01 22:55"},
-		// 		{"_id":"59302adc3bc9dc045051fb88","author":{"_id":"5930293e5993c71590500065","name":"test","password":"7c4a8d09ca3762af61e59520943dc26494f8941b"},"articleId":"59302abe3bc9dc045051fb85","content":"<p>asad</p>\n","created_at":"2017-06-01 22:55"}
-		// 	]
-		// 	,{"n":1,"nModified":1,"ok":1}
-		// ]
 		let article = result[0]
 		let comments = result[1]
 		if (!article) {
 			throw new Error('该文章不存在')
 		}
+		comments.forEach(function (item) {
+			item.created_time = moment(item.created_at).format('YYYY-MM-DD HH:mm')
+		})
 		res.render('article', {
 			article: article,
 			comments: comments

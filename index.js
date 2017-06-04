@@ -51,31 +51,31 @@ app.use(function (req, res, next) {
 	next()
 })
 
-app.use(expressWinston.logger({
-	transports: [
-		new (winston.transports.Console)({
-			json: true,
-			colorize: true
-		}),
-		new winston.transports.File({
-			filename: 'logs/success.log'
-		})
-	]
-}))
+// app.use(expressWinston.logger({
+// 	transports: [
+// 		new (winston.transports.Console)({
+// 			json: true,
+// 			colorize: true
+// 		}),
+// 		new winston.transports.File({
+// 			filename: 'logs/success.log'
+// 		})
+// 	]
+// }))
 
 router(app)
 
-app.use(expressWinston.errorLogger({
-	transports: [
-		new (winston.transports.Console)({
-			json: true,
-			colorize: true
-		}),
-		new winston.transports.File({
-			filename: 'logs/error.log'
-		})
-	]
-}))
+// app.use(expressWinston.errorLogger({
+// 	transports: [
+// 		new (winston.transports.Console)({
+// 			json: true,
+// 			colorize: true
+// 		}),
+// 		new winston.transports.File({
+// 			filename: 'logs/error.log'
+// 		})
+// 	]
+// }))
 
 app.use(function (err, req, res, next) {
 	res.render('error', {

@@ -16,7 +16,7 @@ module.exports = {
 	},
 	getCommentsByArticleId: function (articleId) {
 		return Comment
-			.find({ articleId: articleId })
+			.find({ articleId: articleId, deleted_at: null })
 			.populate({ path: 'author', model: 'User', select: ['name', 'avater'] })
 			.sort({ _id: 1 })
 			// .contentToHtml()
@@ -25,9 +25,11 @@ module.exports = {
 		return Comment.count({ articleId: articleId })
 	},
 	deleteCommentsByArticleId: function (articleId) {
-		return Comment.remove({ articleId: articleId })
+		// return Comment.remove({ articleId: articleId })
+		return Comment.findOneAndUpdate({ articleId: articleId }, { $set: { deleted_at: Date.now() } })
 	},
 	deleteCommentsById: function (commentId, author) {
-		return Comment.remove({ _id: commentId, author: author })
+		// return Comment.remove({ _id: commentId, author: author })
+		return Comment.findAndUpdate({ _id: commentId, author: author }, { $set: { deleted_at: Date.now() } })
 	},
 }

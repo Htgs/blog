@@ -14,8 +14,9 @@
 		</div>
 		<div class="row">
 			<h3></h3>
-			<pre><%- article.content %></pre>
+			<pre><%- article.contents %></pre>
 			<small>浏览次数：<%= article.pv %></small>
+			<small>评论次数：<%= article.comment_num %></small>
 		</div>
 		<div class="row">
 			<% if (user) { %>

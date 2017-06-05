@@ -1,4 +1,5 @@
 const moment = require('moment')
+const marked = require('marked')
 
 const express = require('express')
 const router = express.Router()
@@ -12,13 +13,22 @@ router.get('/', checkLogin, (req, res, next) => {
 	let query = req.query.author
 	Article.getArticles(query)
 		.then(function (result) {
-			// console.log(result)
 			let articles = result
 			articles.forEach(function (item) {
 				item.created_time = moment(item.created_at).format('YYYY-MM-DD HH:mm')
+				item.contents = marked(item.content)
 			})
-			res.render('articles', {
-				articles: result
+			Promise.all(articles.map(function (article) {
+				return Comment.getCommentsCountByArticleId(article._id)
+					.then(function (commentsCount) {
+						return commentsCount
+					})
+			}))
+			.then(function (r) {
+				res.render('articles', {
+					articles: articles,
+					commentsCounts: r
+				})
 			})
 		})
 		.catch(next)
@@ -62,7 +72,6 @@ router.post('/', checkLogin, (req, res, next) => {
 
 	Article.create(article)
 		.then(function (result) {
-			// res.send(result)
 			article = result
 			req.flash('success', '发表成功')
 			res.redirect(`/article/${article._id}`)
@@ -76,15 +85,17 @@ router.get('/:articleId', (req, res, next) => {
 	Promise.all([
 		Article.getArticleById(articleId),
 		Comment.getCommentsByArticleId(articleId),
-		// Article.incPv(articleId),
+		Comment.getCommentsCountByArticleId(articleId),
+		Article.incPv(articleId)
 	])
 	.then(function (result) {
-		// res.send(result)
 		let article = result[0]
 		let comments = result[1]
 		if (!article) {
 			throw new Error('该文章不存在')
 		}
+		article['comment_num'] = result[2]
+		article['contents'] = marked(article.content)
 		comments.forEach(function (item) {
 			item.created_time = moment(item.created_at).format('YYYY-MM-DD HH:mm')
 		})
@@ -102,8 +113,6 @@ router.get('/:articleId/edit', checkLogin, (req, res, next) => {
 	let author = req.session.user._id
 	Article.getRawArticleById(articleId)
 		.then(function (result) {
-			// res.send(result)
-			// {"_id":"592fc26a7f1b02147c875ca7","author":{"_id":"592fc25a7f1b02147c875ca6","name":"666","password":"77bce9fb18f977ea576bbcd143b2b521073f0cd6"},"title":"888","content":"sasfe","pv":7}
 			let article = result
 			if (!article) {
 				throw new Error('该文章不存在')
@@ -125,20 +134,10 @@ router.post('/:articleId/edit', checkLogin, (req, res, next) => {
 	let author = req.session.user._id
 	let title = req.fields.title
 	let content = req.fields.content
-	Article.updateArticleById(articleId, author, { title: title, content: content })
+	Article.updateArticleById(articleId, author, { title: title, content: content, changed_at: Date.now() })
 		.then(function (result) {
-			// res.send(result)
-			// {"n":1,"nModified":0,"ok":1} //没有改变
-			// {"n":1,"nModified":1,"ok":1} //改变后
-			
-			// if (result.ok == 1) {
-				req.flash('success', '保存成功')
-				res.redirect(`/article/${articleId}`)
-			// }
-			// else {
-			// 	req.flash('error', '保存失败')
-			// 	res.send(result)
-			// }
+			req.flash('success', '保存成功')
+			res.redirect(`/article/${articleId}`)
 		})
 		.catch(next)
 })
@@ -149,9 +148,6 @@ router.get('/:articleId/delete', checkLogin, (req, res, next) => {
 	let author = req.session.user._id
 	Article.deleteArticleById(articleId, author)
 		.then(function (result) {
-			// res.send(result)
-			// {"n":0,"ok":1}
-			// {"n":1,"ok":1}
 			req.flash('success', '删除成功')
 			res.redirect(`/article`)
 		})
@@ -160,7 +156,6 @@ router.get('/:articleId/delete', checkLogin, (req, res, next) => {
 
 // 发表留言
 router.post('/:articleId/comment', checkLogin, (req, res, next) => {
-	// res.send(req.flash())
 	let author = req.session.user._id
 	let articleId = req.params.articleId
 	let content = req.fields.content
@@ -171,8 +166,6 @@ router.post('/:articleId/comment', checkLogin, (req, res, next) => {
 	}
 	Comment.create(comment)
 		.then(function (result) {
-			// res.send(result)
-			// {"result":{"ok":1,"n":1},"ops":[{"author":"592f6a7883e98c1508ac8a82","articleId":"592fbcafad403b0e08d68267","content":"但是","_id":"592fe4bed1eeb61088d6d1f0"}],"insertedCount":1,"insertedIds":[null,"592fe4bed1eeb61088d6d1f0"]}
 			comment = result
 			req.flash('success', '评论成功')
 			res.redirect('back')

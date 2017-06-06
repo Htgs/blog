@@ -1,6 +1,21 @@
 <nav class="navbar">
 	<div class="container">
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<% if (user) { %>
+			<ul class="nav navbar-nav">
+				<div class="media">
+					<div class="media-left">
+						<a href="#">
+							<img class="media-object" src="/img/<%= user.avater %>" alt="<%= user.name %>">
+						</a>
+					</div>
+					<div class="media-body">
+						<h4 class="media-heading"><%= user.name %></h4>
+						<p><%= user.bio %></p>
+					</div>
+				</div>
+			</ul>
+			<% } %>
 			<ul class="nav navbar-nav navbar-right">
 				<% if (user) { %>
 				<li><a href="/article">交流区</a></li>
@@ -11,7 +26,8 @@
 				<li><a href="/signout">登出</a></li>
 				<% } else { %>
 				<li><a href="/signin">登录</a></li>
-				<li><a href="signup">注册</a></li>
+				<li><a href="/signup">注册</a></li>
+				<li><a href="/adminuser">管理入口</a></li>
 				<% } %>
 			</ul>
 		</div>

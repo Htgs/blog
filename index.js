@@ -42,6 +42,7 @@ app.locals.blog = {
 	title: pkg.name,
 	description: pkg.description
 }
+app.locals.admin = false
 
 app.use(function (req, res, next) {
 	res.locals.user = req.session.user
@@ -85,7 +86,8 @@ app.use(function (err, req, res, next) {
 if (module.parent) {
 	module.exports = app
 } else {
-	app.listen(config.port, () => {
+	const port = process.env.PORT || config.port
+	app.listen(port, () => {
 		console.log(`${pkg.name} listening on port ${config.port}`)
 	})
 }

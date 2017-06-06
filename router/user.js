@@ -15,8 +15,50 @@ const checkLogin = require('../middlewares/check.js').checkLogin
 // })
 
 router.get('/setting', checkLogin, (req, res, next) => {
-	// res.send(req.flash())
 	res.render('setting')
+})
+
+router.post('/setting', checkLogin, (req, res, next) => {
+	// res.send(req.files)
+	// {"gender":"m","bio":"fdas"}
+	// {
+	// 	"avatar":
+	// 	{
+	// 		"size":2846,
+	// 		"path":"F:\\szh\\blog\\public\\img\\upload_74e58c7599d555a24ea35070def9b2be.png",
+	// 		"name":"资源 1.png",
+	// 		"type":"image/png",
+	// 		"mtime":"2017-06-06T09:46:34.437Z"
+	// 	}
+	// }
+	let userid = req.session.user._id
+	let gender = req.fields.gender
+	let bio = req.fields.bio
+	let avater = req.files.avater
+	try {
+		if (avater.type.indexOf('png') < 0 && avater.type.indexOf('jpeg') < 0) {
+			throw new Error('文件类型不正确')
+		}
+		if (avater.size / 1024 > 50) {
+			throw new Error('图片不能超过50kb')
+		}
+	} catch (e) {
+		fs.unlink(avater.path)
+		req.flash('error', e.message)
+		res.redirect('back')
+	}
+	let setting = {
+		gender: gender,
+		bio: bio,
+		avater: avater.path.split(path.sep).pop(),
+		changed_at: Date.now()
+	}
+	User.settingById(userid, setting)
+		.then(function (result) {
+			req.flash('success', '修改成功')
+			res.redirect('/user/setting')
+		})
+		.catch(next)
 })
 
 router.get('/password', checkLogin, (req, res, next) => {

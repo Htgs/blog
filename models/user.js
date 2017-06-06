@@ -9,5 +9,8 @@ module.exports = {
     },
     passwordById: function (userId, password) {
     	return User.findOneAndUpdate({ _id: userId }, { password: password })
+    },
+    settingById: function (userId, setting) {
+    	return User.findOneAndUpdate({ _id: userId }, { $set: setting })
     }
 }

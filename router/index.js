@@ -15,6 +15,8 @@ module.exports = (app) => {
 	app.use('/user', require('./user'))
 	app.use('/article', require('./article'))
 
+	app.use('/adminuser', require('./adminuser'))
+
 	app.use((req, res) => {
 		if (!res.headersSent) {
 			res.status(404).render('404')

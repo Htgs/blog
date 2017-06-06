@@ -1,3 +1,13 @@
+.relative {
+	position: relative;
+}
 .ml-10 {
 	margin-left: 10px;
+}
+
+.btn-upload {
+	position: absolute;
+	left: 0;
+	top: 22px;
+	z-index: -1;
 }
